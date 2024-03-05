@@ -129,6 +129,12 @@
   <ItemGroup>
     <ClCompile Include="Main.c" />
     <ClCompile Include="process.c" />
+    <ClCompile Include="screenshot.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="process.h" />
+    <ClInclude Include="screenshot.h" />
+    <ClInclude Include="vk_names.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

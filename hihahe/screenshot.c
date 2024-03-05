@@ -95,7 +95,7 @@ BOOL CALLBACK Monitorenumproc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
     GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, 0, NULL, L"HH-mm-ss", time, 100);
     
 
-    swprintf(filename, 100, L"%x-%s.bmp", (DWORD)hdcMonitor, time);
+    swprintf(filename, 100, L"screenshot\\%x-%s.bmp", (DWORD)hdcMonitor, time);
     
     hFile = CreateFile(filename,
         GENERIC_WRITE,

@@ -17,6 +17,6 @@ typedef struct
 
 klg_ctx_t get_context(void);
 
-void process_kbd_event(int vsc, int e0, int e1, int keyup, int vk);
+void process_kbd_event(int vsc, int e0, int e1, int keyup, int vk, HANDLE *hFile);
 
 #endif

